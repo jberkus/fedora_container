@@ -2,6 +2,15 @@ FROM fedora:24
 
 MAINTAINER Josh Berkus "josh@agliodbs.com"
 
+# create environment variables
+ENV PG_MAJOR=9.5 \
+  PG_VERSION=9.5.3 \
+  POSTGRES_PASSWORD=postgres \
+  APP_USER=app_user \
+  APP_PASSWORD=app_pass \
+  MAX_CONNECTIONS=50 \
+  SHARED_BUFFERS=64MB
+
 # explicitly set user/group IDs
 RUN groupadd -r postgres --gid=2001 && \
   useradd -r -g postgres --uid=2001 postgres
@@ -12,13 +21,17 @@ RUN dnf -y install openssl && \
     postgresql-contrib && \
     dnf clean all
 
+# add data volume
+VOLUME /var/lib/pgsql/data
+
 # set up PostgreSQL data directory
+RUN mkdir /docker && \
+  chmod 755 /docker
+
 USER postgres
-RUN /usr/bin/initdb -D /var/lib/pgsql/data && \
-  /etc/ssl/certs/make-dummy-cert /var/lib/pgsql/data/server.crt && \
-  ln -s /var/lib/pgsql/data/server.crt /var/lib/pgsql/data/server.key
-COPY postgres95/pg_hba.conf /var/lib/pgsql/data
+COPY postgres95/* /docker/
 
 EXPOSE 5432
 
-CMD ["/usr/bin/postgres","-i","-l","-D","/var/lib/pgsql/data"]
+ENTRYPOINT ["/docker/entrypoint.sh"]
+CMD ["postgres","-i","-l","-D","/var/lib/pgsql/data"]
