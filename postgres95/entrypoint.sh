@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-trap
-
 if [ "$1" = 'postgres' ]; then
 
   if [ ! -d "/var/lib/pgsql/data" ]; then

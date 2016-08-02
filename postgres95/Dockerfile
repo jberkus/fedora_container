@@ -2,6 +2,13 @@ FROM fedora:24
 
 MAINTAINER Josh Berkus "josh@agliodbs.com"
 
+# Fedora Layered Images labels
+LABEL BZComponent="postgresql-container" \
+  Name="fedora/postgresql-container" \
+  Version="9.5" \
+  Release="1" \
+  Architecture="x86_64"
+
 # create environment variables
 ENV PG_MAJOR=9.5 \
   PG_VERSION=9.5.3 \
