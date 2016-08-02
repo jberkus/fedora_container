@@ -18,7 +18,8 @@ RUN groupadd -r postgres --gid=2001 && \
 # install packages
 RUN dnf -y install openssl && \
     dnf -y install postgresql-server \
-    postgresql-contrib && \
+    postgresql-contrib \
+    sudo && \
     dnf clean all
 
 # add data volume
@@ -28,7 +29,6 @@ VOLUME /var/lib/pgsql/data
 RUN mkdir /docker && \
   chmod 755 /docker
 
-USER postgres
 COPY postgres95/* /docker/
 
 EXPOSE 5432
