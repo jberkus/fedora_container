@@ -23,6 +23,15 @@ LABEL INSTALL="docker run -t -i --rm --privileged -u 0:0 -v /:/host --net=host -
     UNINSTALL="docker run -t -i --rm --privileged -u 0:0 -v /:/host --net=host --ipc=host --pid=host -e LOGDIR=/var/log/\"\${NAME}\" -e DATADIR=/var/lib/\"\${NAME}\" -e IMAGE=\"\${IMAGE}\" -e NAME=\"\${NAME}\" \${IMAGE} /atomic/uninstall.sh" \
     RUN="docker run -p 5432:5432 -d -v /var/lib/\${NAME}:/var/lib/pgsql/ \${IMAGE}"
 
+# add Openshift labels
+LABEL io.k8s.description="PostgreSQL relational-SQL database server" \
+      io.k8s.display-name="PostgreSQL 9.5" \
+      io.openshift.expose-services="5432:tcp" \
+      io.openshift.tags="image,sql,database,postgres,postgresql \
+      io.openshift.non-scalable="true" \
+      io.openshift.min-memory="128M" \
+      io.openshift.min-cpu=1
+
 # explicitly set user/group IDs
 RUN groupadd -r postgres --gid=2001 && \
   useradd -r -g postgres --uid=2001 postgres
